@@ -29,6 +29,7 @@ async def invested_amount_for_projects(
     open_projects_db = sorted(open_projects_db, key=lambda x: x.create_date)
 
     for current_project in open_projects_db:
+        check_fully_invested(current_project)
         for current_donation in free_donations_db:
             # Сколько еще нужно донатов проекту
             project_required_amount = (current_project.full_amount

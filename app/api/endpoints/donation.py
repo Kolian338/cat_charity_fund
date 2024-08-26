@@ -26,6 +26,21 @@ async def get_all_donations(
     return all_donations
 
 
+@donations_router.get(
+    '/my',
+    response_model=list[DonationCreateResponse],
+    dependencies=[Depends(current_superuser)]
+)
+async def get_my_donations(
+        user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    my_donations = await donations_crud.get_donations_by_user_id(
+        user_id=user.id, session=session
+    )
+    return my_donations
+
+
 @donations_router.post(
     '/',
     response_model=DonationCreateResponse,
