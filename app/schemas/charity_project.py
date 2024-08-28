@@ -1,10 +1,29 @@
 from datetime import datetime
 
-from pydantic import BaseModel, PositiveInt, Field, NonNegativeInt
-import random
+from pydantic import (PositiveInt, Field, NonNegativeInt)
+
+from app.schemas.base import MyBaseModel
 
 
-class CharityProjectCreate(BaseModel):
+class CharityProjectBase(MyBaseModel):
+    name: str = Field(
+        None,
+        min_length=1,
+        max_length=100,
+        example='Новый проект №1'
+    )
+    description: str = Field(
+        None,
+        min_length=1,
+        example='На корм котикам'
+    )
+    full_amount: PositiveInt = Field(
+        None,
+        example=10_000
+    )
+
+
+class CharityProjectCreate(CharityProjectBase):
     name: str = Field(
         ...,
         min_length=1,
@@ -13,6 +32,7 @@ class CharityProjectCreate(BaseModel):
     )
     description: str = Field(
         ...,
+        min_length=1,
         example='На корм котикам'
     )
     full_amount: PositiveInt = Field(
@@ -21,7 +41,7 @@ class CharityProjectCreate(BaseModel):
     )
 
 
-class CharityProjectUpdate(CharityProjectCreate):
+class CharityProjectUpdate(CharityProjectBase):
     pass
 
 

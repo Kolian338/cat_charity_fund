@@ -4,7 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import (
     check_project_name_duplicate, check_project_has_no_investments,
-    check_project_is_open, check_required_amount_is_less_invested
+    check_project_is_open, check_required_amount_is_less_invested,
+    check_project_name_duplicate_before_update
 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
@@ -32,6 +33,7 @@ async def get_all_charity_projects(
 @charity_project_router.post(
     '/',
     response_model=CharityProjectDB,
+    response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)]
 )
 async def create_new_charity_project(
@@ -55,6 +57,9 @@ async def partially_update_charity_project(
         session: AsyncSession = Depends(get_async_session)
 ):
     project_db = await check_project_is_open(project_id, session)
+    await check_project_name_duplicate_before_update(
+        obj_in=obj_in, project_db=project_db, session=session
+    )
     await check_required_amount_is_less_invested(
         obj_in.full_amount, project_db
     )
@@ -71,7 +76,6 @@ async def partially_update_charity_project(
     '/{project_id}',
     response_model=CharityProjectDB,
     dependencies=[Depends(current_superuser)],
-    response_model_exclude_none=True
 )
 async def delete_charity_project(
         project_id: int,

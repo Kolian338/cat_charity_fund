@@ -1,14 +1,16 @@
 from datetime import datetime
 
-from pydantic import BaseModel, PositiveInt, Field
+from pydantic import PositiveInt, Field
+
+from app.schemas.base import MyBaseModel
 
 
-class DonationCommon(BaseModel):
+class DonationCommon(MyBaseModel):
     id: int
     create_date: datetime
 
 
-class DonationBase(BaseModel):
+class DonationBase(MyBaseModel):
     full_amount: PositiveInt
     comment: str | None = Field(None, example='Котикам')
 
